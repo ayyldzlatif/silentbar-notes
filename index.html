@@ -1,375 +1,361 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Notes</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #1e1e1e;
-            color: #ffffff;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .sidebar {
-            width: 250px;
-            background-color: #2d2d2d;
-            border-right: 1px solid #444;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-        .sidebar-header {
-            padding: 10px;
-            border-bottom: 1px solid #444;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .sidebar-header h2 {
-            margin: 0;
-            font-size: 16px;
-        }
-        .settings-icon {
-            cursor: pointer;
-            font-size: 18px;
-        }
-        .folder-list {
-            flex: 1;
-            padding: 10px;
-        }
-        .folder {
-            margin-bottom: 5px;
-            cursor: pointer;
-        }
-        .folder-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 5px;
-            background-color: #3a3a3a;
-            border-radius: 4px;
-        }
-        .folder-toggle {
-            font-size: 12px;
-            margin-right: 5px;
-        }
-        .folder-name {
-            flex: 1;
-            font-weight: bold;
-        }
-        .folder-actions {
-            display: none;
-        }
-        .folder-actions button {
-            background: none;
-            border: none;
-            color: #ff6b6b;
-            cursor: pointer;
-            font-size: 12px;
-            margin-left: 5px;
-        }
-        .folder-notes {
-            display: none;
-            margin-left: 20px;
-            margin-top: 5px;
-        }
-        .note {
-            padding: 5px;
-            background-color: #4a4a4a;
-            border-radius: 4px;
-            margin-bottom: 5px;
-            cursor: pointer;
-        }
-        .note-title {
-            font-weight: bold;
-        }
-        .note-actions {
-            display: none;
-        }
-        .note-actions button {
-            background: none;
-            border: none;
-            color: #ff6b6b;
-            cursor: pointer;
-            font-size: 12px;
-            margin-left: 5px;
-        }
-        .add-folder, .add-note {
-            display: none;
-            margin-top: 10px;
-        }
-        .add-folder input, .add-note input {
-            width: 100%;
-            padding: 5px;
-            background-color: #3a3a3a;
-            border: 1px solid #555;
-            color: #fff;
-            border-radius: 4px;
-        }
-        .content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        .content h1 {
-            margin-top: 0;
-        }
-        .note-detail textarea {
-            width: 100%;
-            height: 300px;
-            background-color: #2d2d2d;
-            border: 1px solid #555;
-            color: #fff;
-            padding: 10px;
-            border-radius: 4px;
-            resize: vertical;
-        }
-        .note-detail .note-content {
-            white-space: pre-line;
-        }
-        .edit-mode .folder-actions, .edit-mode .note-actions, .edit-mode .add-folder, .edit-mode .add-note {
-            display: block;
-        }
-        .edit-mode .folder-name, .edit-mode .note-title {
-            cursor: text;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Sidebar Notlar</title>
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background: #1e1e1e;
+  color: #e0e0e0;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+#app {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+/* SOL PANEL */
+#sidebar {
+  width: 40%;
+  min-width: 220px;
+  max-width: 280px;
+  background: #252525;
+  border-right: 1px solid #333;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.sidebar-header {
+  margin-bottom: 10px;
+}
+
+button {
+  background: #333;
+  color: #ddd;
+  border: none;
+  padding: 6px 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+button:hover {
+  background: #444;
+}
+
+.folder {
+  margin-top: 6px;
+}
+
+.folder-title {
+  padding: 6px;
+  cursor: pointer;
+}
+
+.folder-title.selected {
+  background: #3a3a3a;
+  color: #4fc3f7;
+}
+
+.notes {
+  margin-left: 10px;
+  margin-top: 4px;
+}
+
+.note-title {
+  padding: 4px 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.note-title.selected {
+  background: #3a3a3a;
+  color: #81c784;
+}
+
+/* SAĞ PANEL */
+#content {
+  flex: 1;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+#settings {
+  cursor: pointer;
+  font-size: 18px;
+}
+
+input, textarea {
+  width: 100%;
+  background: #2b2b2b;
+  color: #e0e0e0;
+  border: 1px solid #444;
+  padding: 6px;
+  margin-bottom: 8px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.actions button {
+  width: auto;
+  flex: 1;
+}
+
+.readonly {
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.5;
+}
+</style>
 </head>
 <body>
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h2>Klasörler</h2>
-            <span class="settings-icon" id="settings-toggle">⚙️</span>
-        </div>
-        <div class="folder-list" id="folder-list">
-            <!-- Folders will be rendered here -->
-        </div>
-        <div class="add-folder">
-            <input type="text" id="new-folder-name" placeholder="Yeni klasör adı">
-            <button id="add-folder-btn">Ekle</button>
-        </div>
+<div id="app">
+  <div id="sidebar">
+    <div class="sidebar-header">
+      <button id="addFolder">+ Yeni Klasör Oluştur</button>
     </div>
-    <div class="content" id="content">
-        <p>Hoş geldiniz! Bir klasör veya not seçin.</p>
+    <div id="folderList"></div>
+  </div>
+
+  <div id="content">
+    <div class="content-header">
+      <div id="contentTitle"></div>
+      <div id="settings">⚙️</div>
     </div>
+    <div id="contentBody"></div>
+  </div>
+</div>
 
-    <script>
-        let folders = JSON.parse(localStorage.getItem('folders')) || [];
-        let selectedFolderId = null;
-        let selectedNoteId = null;
-        let editMode = false;
+<script>
+const STORAGE_KEY = "sidebar_notes_app";
 
-        const folderList = document.getElementById('folder-list');
-        const content = document.getElementById('content');
-        const settingsToggle = document.getElementById('settings-toggle');
-        const addFolderBtn = document.getElementById('add-folder-btn');
-        const newFolderName = document.getElementById('new-folder-name');
+let state = {
+  folders: [],
+  selectedFolderId: null,
+  selectedNoteId: null,
+  editMode: false
+};
 
-        function saveFolders() {
-            localStorage.setItem('folders', JSON.stringify(folders));
-        }
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
 
-        function renderFolders() {
-            folderList.innerHTML = '';
-            folders.forEach(folder => {
-                const folderDiv = document.createElement('div');
-                folderDiv.className = 'folder';
-                folderDiv.innerHTML = `
-                    <div class="folder-header">
-                        <span class="folder-toggle">${folder.expanded ? '▼' : '▶'}</span>
-                        <span class="folder-name" data-id="${folder.id}">${folder.name}</span>
-                        <div class="folder-actions">
-                            <button class="delete-folder" data-id="${folder.id}">Sil</button>
-                        </div>
-                    </div>
-                    <div class="folder-notes" style="display: ${folder.expanded ? 'block' : 'none'};">
-                        ${folder.notes.map(note => `
-                            <div class="note" data-folder-id="${folder.id}" data-note-id="${note.id}">
-                                <span class="note-title">${note.title}</span>
-                                <div class="note-actions">
-                                    <button class="delete-note" data-folder-id="${folder.id}" data-note-id="${note.id}">Sil</button>
-                                </div>
-                            </div>
-                        `).join('')}
-                        <div class="add-note" data-folder-id="${folder.id}">
-                            <input type="text" class="new-note-title" placeholder="Yeni not başlığı">
-                            <button class="add-note-btn" data-folder-id="${folder.id}">Ekle</button>
-                        </div>
-                    </div>
-                `;
-                folderList.appendChild(folderDiv);
-            });
-        }
+function loadState() {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (data) state = JSON.parse(data);
+  } catch {
+    state = { folders: [], selectedFolderId: null, selectedNoteId: null, editMode: false };
+  }
+}
 
-        function renderContent() {
-            if (selectedNoteId && selectedFolderId) {
-                const folder = folders.find(f => f.id === selectedFolderId);
-                const note = folder.notes.find(n => n.id === selectedNoteId);
-                content.innerHTML = `
-                    <h1>${note.title}</h1>
-                    <div class="note-detail">
-                        ${editMode ? `<textarea id="note-content">${note.content}</textarea>` : `<div class="note-content">${note.content.replace(/\n/g, '<br>')}</div>`}
-                    </div>
-                `;
-            } else if (selectedFolderId) {
-                const folder = folders.find(f => f.id === selectedFolderId);
-                content.innerHTML = `<h1>${folder.name}</h1><p>Klasör seçildi. Bir not seçin veya düzenleyin.</p>`;
-            } else {
-                content.innerHTML = '<p>Hoş geldiniz! Bir klasör veya not seçin.</p>';
-            }
-        }
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
 
-        function toggleEditMode() {
-            editMode = !editMode;
-            document.body.classList.toggle('edit-mode', editMode);
-            renderFolders();
-            renderContent();
-        }
+/* RENDER */
+function render() {
+  renderSidebar();
+  renderContent();
+  saveState();
+}
 
-        settingsToggle.addEventListener('click', toggleEditMode);
+function renderSidebar() {
+  const list = document.getElementById("folderList");
+  list.innerHTML = "";
 
-        folderList.addEventListener('click', (e) => {
-            const target = e.target;
-            const folderId = target.closest('.folder')?.querySelector('.folder-name')?.dataset.id;
-            const noteId = target.closest('.note')?.dataset.noteId;
-            const folderIdFromNote = target.closest('.note')?.dataset.folderId;
+  state.folders.forEach(folder => {
+    const f = document.createElement("div");
+    f.className = "folder";
 
-            if (target.classList.contains('folder-toggle') || target.classList.contains('folder-name')) {
-                const folder = folders.find(f => f.id === folderId);
-                if (target.classList.contains('folder-toggle')) {
-                    folder.expanded = !folder.expanded;
-                } else if (target.classList.contains('folder-name') && !editMode) {
-                    selectedFolderId = folderId;
-                    selectedNoteId = null;
-                }
-                renderFolders();
-                renderContent();
-            } else if (target.classList.contains('note')) {
-                selectedFolderId = folderIdFromNote;
-                selectedNoteId = noteId;
-                renderContent();
-            } else if (target.classList.contains('delete-folder')) {
-                folders = folders.filter(f => f.id !== folderId);
-                saveFolders();
-                if (selectedFolderId === folderId) {
-                    selectedFolderId = null;
-                    selectedNoteId = null;
-                }
-                renderFolders();
-                renderContent();
-            } else if (target.classList.contains('delete-note')) {
-                const folder = folders.find(f => f.id === folderIdFromNote);
-                folder.notes = folder.notes.filter(n => n.id !== noteId);
-                saveFolders();
-                if (selectedNoteId === noteId) {
-                    selectedNoteId = null;
-                }
-                renderFolders();
-                renderContent();
-            } else if (target.classList.contains('add-note-btn')) {
-                const folder = folders.find(f => f.id === folderIdFromNote);
-                const titleInput = target.previousElementSibling;
-                if (titleInput.value.trim()) {
-                    folder.notes.push({
-                        id: Date.now().toString(),
-                        title: titleInput.value.trim(),
-                        content: ''
-                    });
-                    saveFolders();
-                    titleInput.value = '';
-                    renderFolders();
-                }
-            }
-        });
+    const title = document.createElement("div");
+    title.className = "folder-title" + (folder.id === state.selectedFolderId ? " selected" : "");
+    title.textContent = folder.name;
 
-        addFolderBtn.addEventListener('click', () => {
-            if (newFolderName.value.trim()) {
-                folders.push({
-                    id: Date.now().toString(),
-                    name: newFolderName.value.trim(),
-                    expanded: false,
-                    notes: []
-                });
-                saveFolders();
-                newFolderName.value = '';
-                renderFolders();
-            }
-        });
+    let clickTimer = null;
+    title.onclick = () => {
+      if (clickTimer) return;
+      clickTimer = setTimeout(() => {
+        state.selectedFolderId = folder.id;
+        state.selectedNoteId = null;
+        state.editMode = false;
+        render();
+        clickTimer = null;
+      }, 200);
+    };
 
-        folderList.addEventListener('dblclick', (e) => {
-            if (e.target.classList.contains('folder-name') && editMode) {
-                const folderId = e.target.dataset.id;
-                const folder = folders.find(f => f.id === folderId);
-                const input = document.createElement('input');
-                input.value = folder.name;
-                input.style.width = '100%';
-                input.style.backgroundColor = '#3a3a3a';
-                input.style.border = '1px solid #555';
-                input.style.color = '#fff';
-                input.style.borderRadius = '4px';
-                e.target.replaceWith(input);
-                input.focus();
-                input.addEventListener('blur', () => {
-                    folder.name = input.value.trim() || 'Yeni Klasör';
-                    saveFolders();
-                    renderFolders();
-                });
-                input.addEventListener('keydown', (event) => {
-                    if (event.key === 'Enter') {
-                        input.blur();
-                    }
-                });
-            }
-        });
+    title.ondblclick = () => {
+      clearTimeout(clickTimer);
+      clickTimer = null;
+      folder.open = !folder.open;
+      render();
+    };
 
-        content.addEventListener('input', (e) => {
-            if (e.target.id === 'note-content' && editMode) {
-                const folder = folders.find(f => f.id === selectedFolderId);
-                const note = folder.notes.find(n => n.id === selectedNoteId);
-                note.content = e.target.value;
-                saveFolders();
-            }
-        });
+    f.appendChild(title);
 
-        content.addEventListener('dblclick', (e) => {
-            if (e.target.classList.contains('note-title') && editMode) {
-                const folderId = e.target.closest('.note').dataset.folderId;
-                const noteId = e.target.closest('.note').dataset.noteId;
-                const folder = folders.find(f => f.id === folderId);
-                const note = folder.notes.find(n => n.id === noteId);
-                const input = document.createElement('input');
-                input.value = note.title;
-                input.style.width = '100%';
-                input.style.backgroundColor = '#3a3a3a';
-                input.style.border = '1px solid #555';
-                input.style.color = '#fff';
-                input.style.borderRadius = '4px';
-                e.target.replaceWith(input);
-                input.focus();
-                input.addEventListener('blur', () => {
-                    note.title = input.value.trim() || 'Yeni Not';
-                    saveFolders();
-                    renderFolders();
-                    renderContent();
-                });
-                input.addEventListener('keydown', (event) => {
-                    if (event.key === 'Enter') {
-                        input.blur();
-                    }
-                });
-            }
-        });
+    if (folder.open) {
+      const notes = document.createElement("div");
+      notes.className = "notes";
 
-        renderFolders();
-        renderContent();
-    </script>
+      folder.notes.forEach(note => {
+        const n = document.createElement("div");
+        n.className = "note-title" + (note.id === state.selectedNoteId ? " selected" : "");
+        n.textContent = note.title;
+        n.onclick = () => {
+          state.selectedNoteId = note.id;
+          state.selectedFolderId = folder.id;
+          state.editMode = false;
+          render();
+        };
+        notes.appendChild(n);
+      });
+
+      const addNote = document.createElement("button");
+      addNote.textContent = "+ Yeni Not Ekle";
+      addNote.onclick = () => {
+        const newNote = { id: uid(), title: "Yeni Notlar", content: "" };
+        folder.notes.push(newNote);
+        state.selectedFolderId = folder.id;
+        state.selectedNoteId = newNote.id;
+        state.editMode = false;
+        render();
+      };
+
+      notes.appendChild(addNote);
+      f.appendChild(notes);
+    }
+
+    list.appendChild(f);
+  });
+}
+
+function renderContent() {
+  const title = document.getElementById("contentTitle");
+  const body = document.getElementById("contentBody");
+  title.textContent = "";
+  body.innerHTML = "";
+
+  const folder = state.folders.find(f => f.id === state.selectedFolderId);
+  if (!folder) return;
+
+  const note = folder.notes.find(n => n.id === state.selectedNoteId);
+
+  if (note) {
+    title.textContent = note.title;
+    if (state.editMode) {
+      const t = document.createElement("input");
+      t.value = note.title;
+
+      const ta = document.createElement("textarea");
+      ta.value = note.content;
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+
+      const save = document.createElement("button");
+      save.textContent = "Kaydet";
+      save.onclick = () => {
+        note.title = t.value.trim() || "Yeni Notlar";
+        note.content = ta.value;
+        state.editMode = false;
+        render();
+      };
+
+      const del = document.createElement("button");
+      del.textContent = "Sil";
+      del.onclick = () => {
+        folder.notes = folder.notes.filter(n => n.id !== note.id);
+        state.selectedNoteId = null;
+        state.editMode = false;
+        render();
+      };
+
+      actions.append(save, del);
+      body.append(t, ta, actions);
+    } else {
+      const view = document.createElement("div");
+      view.className = "readonly";
+      view.textContent = note.content;
+      body.appendChild(view);
+    }
+  } else {
+    title.textContent = folder.name;
+    if (state.editMode) {
+      const input = document.createElement("input");
+      input.value = folder.name;
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+
+      const save = document.createElement("button");
+      save.textContent = "Kaydet";
+      save.onclick = () => {
+        folder.name = input.value.trim() || "Yeni Klasör";
+        state.editMode = false;
+        render();
+      };
+
+      const del = document.createElement("button");
+      del.textContent = "Sil";
+      del.onclick = () => {
+        state.folders = state.folders.filter(f => f.id !== folder.id);
+        state.selectedFolderId = null;
+        state.editMode = false;
+        render();
+      };
+
+      actions.append(save, del);
+      body.append(input, actions);
+    }
+  }
+}
+
+/* EVENTS */
+document.getElementById("addFolder").onclick = () => {
+  const folder = { id: uid(), name: "Yeni Klasör", open: true, notes: [] };
+  state.folders.push(folder);
+  state.selectedFolderId = folder.id;
+  state.selectedNoteId = null;
+  state.editMode = false;
+  render();
+};
+
+document.getElementById("settings").onclick = () => {
+  if (!state.selectedFolderId) return;
+  state.editMode = !state.editMode;
+  render();
+};
+
+/* INIT */
+loadState();
+render();
+</script>
 </body>
 </html>
