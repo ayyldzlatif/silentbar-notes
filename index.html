@@ -61,11 +61,33 @@ button:hover {
 .folder-title {
   padding: 6px;
   cursor: pointer;
+  border: 1px solid #444;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .folder-title.selected {
   background: #3a3a3a;
   color: #4fc3f7;
+  border-color: #4fc3f7;
+}
+
+.folder-title-text {
+  flex: 1;
+}
+
+.favorite-star {
+  cursor: pointer;
+  font-size: 14px;
+  user-select: none;
+  color: #666;
+}
+
+.favorite-star.active {
+  color: #ffd700;
 }
 
 .notes {
@@ -77,11 +99,22 @@ button:hover {
   padding: 4px 6px;
   cursor: pointer;
   font-size: 13px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .note-title.selected {
   background: #3a3a3a;
   color: #81c784;
+  border-color: #81c784;
+}
+
+.note-title-text {
+  flex: 1;
 }
 
 /* SAĞ PANEL */
@@ -191,16 +224,40 @@ function renderSidebar() {
   const list = document.getElementById("folderList");
   list.innerHTML = "";
 
-  state.folders.forEach(folder => {
+  // Favorileri önce göster, sonra diğerleri
+  const sortedFolders = [...state.folders].sort((a, b) => {
+    if (a.favorite && !b.favorite) return -1;
+    if (!a.favorite && b.favorite) return 1;
+    return 0;
+  });
+
+  sortedFolders.forEach(folder => {
     const f = document.createElement("div");
     f.className = "folder";
 
     const title = document.createElement("div");
     title.className = "folder-title" + (folder.id === state.selectedFolderId ? " selected" : "");
-    title.textContent = folder.name;
+    
+    const titleText = document.createElement("span");
+    titleText.className = "folder-title-text";
+    titleText.textContent = folder.name;
+    
+    const star = document.createElement("span");
+    if (folder.favorite === undefined) folder.favorite = false;
+    star.className = "favorite-star" + (folder.favorite ? " active" : "");
+    star.textContent = "⭐";
+    star.onclick = (e) => {
+      e.stopPropagation();
+      folder.favorite = !folder.favorite;
+      render();
+    };
+    
+    title.appendChild(titleText);
+    title.appendChild(star);
 
     let clickTimer = null;
-    title.onclick = () => {
+    title.onclick = (e) => {
+      if (e.target === star) return;
       if (clickTimer) return;
       clickTimer = setTimeout(() => {
         state.selectedFolderId = folder.id;
@@ -211,7 +268,8 @@ function renderSidebar() {
       }, 200);
     };
 
-    title.ondblclick = () => {
+    title.ondblclick = (e) => {
+      if (e.target === star) return;
       clearTimeout(clickTimer);
       clickTimer = null;
       folder.open = !folder.open;
@@ -224,11 +282,36 @@ function renderSidebar() {
       const notes = document.createElement("div");
       notes.className = "notes";
 
-      folder.notes.forEach(note => {
+      // Notları sırala: Favoriler önce
+      const sortedNotes = [...folder.notes].sort((a, b) => {
+        if (a.favorite && !b.favorite) return -1;
+        if (!a.favorite && b.favorite) return 1;
+        return 0;
+      });
+
+      sortedNotes.forEach(note => {
         const n = document.createElement("div");
         n.className = "note-title" + (note.id === state.selectedNoteId ? " selected" : "");
-        n.textContent = note.title;
-        n.onclick = () => {
+        
+        const noteText = document.createElement("span");
+        noteText.className = "note-title-text";
+        noteText.textContent = note.title;
+        
+        const noteStar = document.createElement("span");
+        if (note.favorite === undefined) note.favorite = false;
+        noteStar.className = "favorite-star" + (note.favorite ? " active" : "");
+        noteStar.textContent = "⭐";
+        noteStar.onclick = (e) => {
+          e.stopPropagation();
+          note.favorite = !note.favorite;
+          render();
+        };
+        
+        n.appendChild(noteText);
+        n.appendChild(noteStar);
+        
+        n.onclick = (e) => {
+          if (e.target === noteStar) return;
           state.selectedNoteId = note.id;
           state.selectedFolderId = folder.id;
           state.editMode = false;
@@ -240,11 +323,11 @@ function renderSidebar() {
       const addNote = document.createElement("button");
       addNote.textContent = "+ Yeni Not Ekle";
       addNote.onclick = () => {
-        const newNote = { id: uid(), title: "Yeni Notlar", content: "" };
+        const newNote = { id: uid(), title: "Yeni Notlar", content: "", favorite: false };
         folder.notes.push(newNote);
         state.selectedFolderId = folder.id;
         state.selectedNoteId = newNote.id;
-        state.editMode = false;
+        state.editMode = true;
         render();
       };
 
@@ -339,16 +422,16 @@ function renderContent() {
 
 /* EVENTS */
 document.getElementById("addFolder").onclick = () => {
-  const folder = { id: uid(), name: "Yeni Klasör", open: true, notes: [] };
+  const folder = { id: uid(), name: "Yeni Klasör", open: true, notes: [], favorite: false };
   state.folders.push(folder);
   state.selectedFolderId = folder.id;
   state.selectedNoteId = null;
-  state.editMode = false;
+  state.editMode = true;
   render();
 };
 
 document.getElementById("settings").onclick = () => {
-  if (!state.selectedFolderId) return;
+  if (!state.selectedFolderId && !state.selectedNoteId) return;
   state.editMode = !state.editMode;
   render();
 };
